@@ -78,6 +78,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <None Include="..\..\grammar\waxeye.waxeye" />
     <None Include="Makefile" />
     <None Include="debug.mak" />
     <None Include="release.mak" />

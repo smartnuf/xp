@@ -3,14 +3,16 @@ Grammar     <- Ws * Definition
 Definition  <- Identifier ( LeftArrow | PruneArrow | VoidArrow ) Alternation Ws
 Alternation <- Sequence * ( Alt Sequence )
 Sequence    <- + Unit
-Unit        <- * ( Prefix | Label )
-               ( Identifier ! ( LeftArrow | PruneArrow | VoidArrow )
-               | Open Alternation Close
-               | Action
-               | Literal
-               | CaseLiteral
-               | CharClass
-               | WildCard )
+Unit        <- * ( Prefix | Label ) 
+               ( 
+                   Identifier ! ( LeftArrow | PruneArrow | VoidArrow )
+                   | Open Alternation Close
+                   | Action
+                   | Literal
+                   | CaseLiteral
+                   | CharClass
+                   | WildCard 
+               )
 Prefix      <- [?*+:&!] Ws
 Label       <- Identifier Ws :'=' Ws
 Action      <- : '@' Identifier ? ( : '<' Ws Identifier * ( Comma Identifier ) : '>' ) Ws
@@ -18,9 +20,9 @@ Identifier  <- [a-zA-Z_] * [a-zA-Z0-9_-] Ws
 Literal     <- : ['] + ( ! ['] ( LChar | Hex ) ) : ['] Ws
 CaseLiteral <- : ["] + ( ! ["] ( LChar | Hex ) ) : ["] Ws
 LChar       <- '\\' [nrt'"\\] | ! '\\' ! EndOfLine .
-CharClass   <- : '[' * ( ! ']' Range) : ']' Ws
-Range       <- (Char | Hex) ? ( : '-' ( Char | Hex) )
-Char        <- '\\' [nrt\-\]\\] 
+CharClass   <- : '[' * ( ! ']' Range ) : ']' Ws
+Range       <- ( Char | Hex ) ? ( : '-' ( Char | Hex ) )
+Char        <- '\\' [nrt\-\]\\]
              | ! '\\' ! ']' ! EndOfLine .
 Hex         <- : '\\u{' [0-9A-Fa-f] ? [0-9A-Fa-f] ? [0-9A-Fa-f] ? [0-9A-Fa-f] ? [0-9A-Fa-f] ? [0-9A-Fa-f] : '}'
 WildCard    <- : '.' Ws

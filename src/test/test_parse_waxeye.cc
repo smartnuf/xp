@@ -24,7 +24,8 @@ main
         {
             std::string s ( std::istreambuf_iterator < char > ( f ), { } ) ;
             f . close ( ) ;
-            xp::parse::waxeye ( s ) ;
+            xp::parse::waxeye waxeye;
+            std::cout << waxeye . parse ( s ) << std::endl ;
         }
         else
         {

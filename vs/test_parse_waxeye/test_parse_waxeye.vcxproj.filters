@@ -25,6 +25,9 @@
     <Filter Include="src\test">
       <UniqueIdentifier>{a20f97d6-32a6-4283-968d-f29f1b483296}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\grammar">
+      <UniqueIdentifier>{52b880d2-af1d-4d70-bb7e-0837519b6bf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak">
@@ -38,6 +41,9 @@
     </None>
     <None Include="test_parse_waxeye-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="..\..\grammar\waxeye.waxeye">
+      <Filter>src\grammar</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
