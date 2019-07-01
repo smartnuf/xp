@@ -20,6 +20,7 @@ namespace xp
         private:
             std::string                 m_text;
             std::string::const_iterator m_text_pos;
+            unsigned                    m_nesting;
 
             //
             // match rules

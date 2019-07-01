@@ -3,9 +3,25 @@
 #include <iostream>
 #include <iostream>
 
-#define trace_result std::cout << __func__ << ( result ? ":y" : ":n" ) << std::endl
-#define trace_result_for( cstr ) std::cout << __func__ << "(" << cstr << ")" << ( result ? ":y" : ":n" ) << std::endl
-
+#if 1
+#define trace_result indent( std::cout, m_nesting ) << __func__ << ( result ? ":y" : ":n" ) << std::endl
+#define trace_result_for( cstr ) indent( std::cout, m_nesting ) << __func__ << "(" << cstr << ")" << ( result ? ":y" : ":n" ) << std::endl
+#define trace_enter ++ m_nesting
+#define trace_leave if ( m_nesting ) -- m_nesting
+std::ostream & indent ( std::ostream & os, unsigned nesting )
+{
+    for ( unsigned i = 0; i != nesting; ++ i )
+    {
+        os << " ";
+    }
+    return os;
+}
+#else
+#define trace_result 
+#define trace_result_for( cstr ) 
+#define trace_enter
+#define trace_leave
+#endif
 namespace xp
 {
     namespace parse
@@ -28,6 +44,7 @@ namespace xp
             const std::string & text
         )
         {
+            m_nesting = 0;
             m_text = text;
             m_text_pos = m_text . cbegin ( );
             return match_grammar ( );
@@ -42,6 +59,7 @@ namespace xp
         waxeye :: 
         match_grammar ( )
         {
+            trace_enter;
             bool result = false;
             if ( match_ws ( ) )
             {
@@ -63,6 +81,7 @@ namespace xp
                 // if is the empty string?
                 std::cerr << "expected ws at pos 0" << std::endl;
             }
+            trace_leave;
             trace_result;
             return result;
         }
@@ -225,6 +244,7 @@ namespace xp
         waxeye ::
         match_eol_comment ( )
         {
+            trace_enter;
             bool result = false;
             if ( match_string ( "#" ) )
             {
@@ -244,6 +264,7 @@ namespace xp
             {
                 result = false;
             }
+            trace_leave;
             trace_result;
             return result;
         }
@@ -252,6 +273,7 @@ namespace xp
         bool waxeye ::
         match_mul_comment ( )
         {
+            trace_enter;
             bool result = false;
             const std::string::const_iterator pos_on_entry = m_text_pos;
             if ( match_string ( "/*" ) )
@@ -275,6 +297,7 @@ namespace xp
                     result = false;
                 }
             }
+            trace_leave;
             trace_result;            
             return result;
         }
@@ -286,12 +309,14 @@ namespace xp
         waxeye ::
         match_eol ( )
         {
+            trace_enter;
             bool result =
             (
                 match_string ( "\r\n" ) ||
                 match_string ( "\n" ) ||
                 match_string ( "\r" )
             );
+            trace_leave;
             trace_result;
             return result;
         }
@@ -301,6 +326,7 @@ namespace xp
         waxeye ::
         match_ws ( )
         {
+            trace_enter;
             // Always
             bool result = true;
             while 
@@ -313,6 +339,7 @@ namespace xp
             {
                 // contiue
             }
+            trace_leave;
             trace_result;
             return result;
         }
