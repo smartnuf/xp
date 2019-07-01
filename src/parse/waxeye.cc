@@ -1,6 +1,10 @@
 #include "waxeye.hh"
 
 #include <iostream>
+#include <iostream>
+
+#define trace_result std::cout << __func__ << ( result ? ":y" : ":n" ) << std::endl
+#define trace_result_for( cstr ) std::cout << __func__ << "(" << cstr << ")" << ( result ? ":y" : ":n" ) << std::endl
 
 namespace xp
 {
@@ -53,12 +57,14 @@ namespace xp
             }
             else
             {
+                result = false;
                 // Sould never happen
                 // perhaps we should call it opt_ws, and return false
                 // if is the empty string?
                 std::cerr << "expected ws at pos 0" << std::endl;
-                return false;
             }
+            trace_result;
+            return result;
         }
 
         bool 
@@ -238,6 +244,7 @@ namespace xp
             {
                 result = false;
             }
+            trace_result;
             return result;
         }
         
@@ -268,7 +275,7 @@ namespace xp
                     result = false;
                 }
             }
-            
+            trace_result;            
             return result;
         }
         
@@ -279,12 +286,14 @@ namespace xp
         waxeye ::
         match_eol ( )
         {
-            return 
+            bool result =
             (
                 match_string ( "\r\n" ) ||
                 match_string ( "\n" ) ||
                 match_string ( "\r" )
             );
+            trace_result;
+            return result;
         }
 
         // <: * ( [ \t] | eol | eol_comment | mul_comment )        
@@ -292,6 +301,8 @@ namespace xp
         waxeye ::
         match_ws ( )
         {
+            // Always
+            bool result = true;
             while 
             (
                 match_char_class ( " \t" ) ||
@@ -302,7 +313,8 @@ namespace xp
             {
                 // contiue
             }
-            return true;
+            trace_result;
+            return result;
         }
 
         // <- [ ]
@@ -330,6 +342,7 @@ namespace xp
                     }
                 }                
             }
+            trace_result;
             return result;
         }
 
@@ -359,6 +372,7 @@ namespace xp
             {
                 m_text_pos = pos;
             }
+            trace_result;
             return result;
         }
 
@@ -377,6 +391,7 @@ namespace xp
                 result = true;
                 ++ m_text_pos;
             }
+            trace_result;
         }
 
         // ! .
@@ -384,7 +399,9 @@ namespace xp
         waxeye :: 
         not_any_char ( )
         {
-            return m_text_pos == m_text . cend ( );
+            bool result = m_text_pos == m_text . cend ( );
+            trace_result;
+            return result;
         }
 
         // ! .
@@ -392,7 +409,9 @@ namespace xp
         waxeye ::
         is_eof ( )
         {
-            return m_text_pos == m_text . cend ( );
+            bool result = m_text_pos == m_text . cend ( );
+            trace_result;
+            return result;
         }
 
         // ! ' '
@@ -416,6 +435,7 @@ namespace xp
                     break;
                 }
             }
+            trace_result;
             return result;
         }
 
@@ -432,6 +452,7 @@ namespace xp
                 not_string ( "\n"   ) &&
                 not_string ( "\r"   )
             );
+            trace_result;
             return result;
         }
     }
