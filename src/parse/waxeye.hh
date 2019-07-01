@@ -53,15 +53,17 @@ namespace xp
             bool match_ws ( );
 
             //
-            // Parametised rules
+            // Sub-rules
             //
             bool match_char_class ( const char * char_class );
             bool match_string     ( const char * cstr );
+            bool match_any_char   ( );
 
-            //
-            // utilities
-            //
-            void set_text_pos ( const std::string::const_iterator text_pos );
+            // predicates
+            bool not_any_char     ( );
+            bool is_eof           ( );
+            bool not_string       ( const char * cstr );
+            bool not_eol          ( );
         };
     }
 }

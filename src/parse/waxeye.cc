@@ -38,19 +38,24 @@ namespace xp
         waxeye :: 
         match_grammar ( )
         {
+            bool result = false;
             if ( match_ws ( ) )
             {
                 if ( match_definition ( ) )
                 {
-                    return true;
+                    result = true;
                 }
                 else
                 {
-                    return false;
+                    std::cerr << "expected definition" << std::endl;
+                    result = false;
                 }
             }
             else
             {
+                // Sould never happen
+                // perhaps we should call it opt_ws, and return false
+                // if is the empty string?
                 std::cerr << "expected ws at pos 0" << std::endl;
                 return false;
             }
@@ -209,19 +214,67 @@ namespace xp
             return false;
         }
         
+        // <: '#' * ( ! EndOfLine . ) ( EndOfLine | !. )
         bool 
         waxeye ::
         match_eol_comment ( )
         {
-            return false;
+            bool result = false;
+            if ( match_string ( "#" ) )
+            {
+                result = true;
+                while 
+                (
+                    not_eol ( ) && match_any_char ( ) 
+                )
+                {
+                    // Continue    
+                }
+                // note how the expression value is un important here
+                // only the side effect of match_eol ( ) actuall matters
+                ( void ) ( match_eol ( ) || is_eof ( ) );
+            }
+            else
+            {
+                result = false;
+            }
+            return result;
         }
         
+        // <: '/*' * ( MComment | ! '*/' . ) '*/'
         bool waxeye ::
         match_mul_comment ( )
         {
-            return false;
+            bool result = false;
+            const std::string::const_iterator pos_on_entry = m_text_pos;
+            if ( match_string ( "/*" ) )
+            {
+                while 
+                (
+                    match_mul_comment ( )  ||
+                    not_string ( "*/" )    && 
+                    match_any_char ( )
+                )
+                {
+                    // Continue
+                }
+                if ( match_string ( "*/" ) )
+                {
+                    result = true;
+                }
+                else
+                {
+                    m_text_pos = pos_on_entry;
+                    result = false;
+                }
+            }
+            
+            return result;
         }
         
+        // <: '\r\n' 
+        //   | '\n' 
+        //   | '\r'
         bool
         waxeye ::
         match_eol ( )
@@ -233,12 +286,12 @@ namespace xp
                 match_string ( "\r" )
             );
         }
-        
+
+        // <: * ( [ \t] | eol | eol_comment | mul_comment )        
         bool
         waxeye ::
         match_ws ( )
         {
-            std::string::const_iterator text_pos = m_text_pos;
             while 
             (
                 match_char_class ( " \t" ) ||
@@ -249,6 +302,7 @@ namespace xp
             {
                 // contiue
             }
+            return true;
         }
 
         // <- [ ]
@@ -305,6 +359,79 @@ namespace xp
             {
                 m_text_pos = pos;
             }
+            return result;
+        }
+
+        // .
+        bool
+        waxeye ::
+        match_any_char ( )
+        {
+            bool result = false;
+            if ( m_text_pos == m_text . cend ( ) )
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+                ++ m_text_pos;
+            }
+        }
+
+        // ! .
+        bool
+        waxeye :: 
+        not_any_char ( )
+        {
+            return m_text_pos == m_text . cend ( );
+        }
+
+        // ! .
+        bool
+        waxeye ::
+        is_eof ( )
+        {
+            return m_text_pos == m_text . cend ( );
+        }
+
+        // ! ' '
+        bool 
+        waxeye ::
+        not_string 
+        ( 
+            const char * cstr 
+        )
+        {
+            bool result = false;
+            std::string::const_iterator pos = m_text_pos;
+            for ( int i = 0; cstr [ i ] != '\0'; ++ i, ++ pos )
+            {
+                if 
+                ( 
+                    pos == m_text . cend ( ) ||
+                    * pos != cstr [ i ] )
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        // ! ( "\r\n" | "\n" | "\r" )
+        bool 
+        waxeye ::
+        not_eol ( )
+        {
+            // clearly we could simplify here
+            // but we won't, for the sake of clarity
+            bool result = 
+            ( 
+                not_string ( "\r\n" ) &&
+                not_string ( "\n"   ) &&
+                not_string ( "\r"   )
+            );
             return result;
         }
     }
