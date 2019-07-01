@@ -259,18 +259,22 @@ namespace xp
             const char * char_class 
         )
         {
-            bool result = false;
-            if ( m_text_pos != m_text.end ( ) )
+            bool result = true;
+            if ( * char_class != '\0' )
             {
-                for ( int i = 0; char_class [ i ] != 0; i++ )
+                result = false;
+                if ( m_text_pos != m_text.end ( ) )
                 {
-                    if ( * m_text_pos == char_class [ i ] )
+                    for ( int i = 0; char_class [ i ] != 0; i++ )
                     {
-                        result = true;
-                        ++ m_text_pos;
-                        break;
+                        if ( * m_text_pos == char_class [ i ] )
+                        {
+                            result = true;
+                            ++ m_text_pos;
+                            break;
+                        }
                     }
-                }
+                }                
             }
             return result;
         }
