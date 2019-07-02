@@ -3,6 +3,12 @@
 #include <iostream>
 #include <iostream>
 
+#if 1
+#define trace( pos ) do { std::cout << * pos; } while ( 0 )
+#else
+#define trace( pos )
+#endif
+
 namespace xp
 {
     namespace parse
@@ -48,7 +54,7 @@ namespace xp
                 }
                 else
                 {
-                    std::cerr << "expected definition" << std::endl;
+                    std::cout << "^" << std::endl << "expected definition" << std::endl;
                     result = false;
                 }
             }
@@ -58,7 +64,7 @@ namespace xp
                 // Sould never happen
                 // perhaps we should call it opt_ws, and return false
                 // if is the empty string?
-                std::cerr << "expected ws at pos 0" << std::endl;
+                std::cout << "expected ws at pos 0" << std::endl;
             }
             return result;
         }
@@ -329,6 +335,7 @@ namespace xp
                         if ( * m_text_pos == char_class [ i ] )
                         {
                             result = true;
+                            trace ( m_text_pos );
                             ++ m_text_pos;
                             break;
                         }
@@ -350,12 +357,18 @@ namespace xp
             std::string::const_iterator pos = m_text_pos;
             for ( int i = 0; str [ i ] != '\0'; ++ i, ++ pos )
             {
-                if ( 
+                if 
+                ( 
                     pos == m_text . cend ( ) ||
-                    * pos != str [ i ] )
+                    * pos != str [ i ] 
+                )
                 {
                     result = false;
                     break;
+                }
+                else
+                {
+                    trace ( pos );        
                 }
             }
             if ( result )
@@ -378,6 +391,7 @@ namespace xp
             else
             {
                 result = true;
+                trace ( m_text_pos );
                 ++ m_text_pos;
             }
         }
