@@ -3,25 +3,6 @@
 #include <iostream>
 #include <iostream>
 
-#if 1
-#define trace_result indent( std::cout, m_nesting ) << __func__ << ( result ? ":y" : ":n" ) << std::endl
-#define trace_result_for( cstr ) indent( std::cout, m_nesting ) << __func__ << "(" << cstr << ")" << ( result ? ":y" : ":n" ) << std::endl
-#define trace_enter ++ m_nesting
-#define trace_leave if ( m_nesting ) -- m_nesting
-std::ostream & indent ( std::ostream & os, unsigned nesting )
-{
-    for ( unsigned i = 0; i != nesting; ++ i )
-    {
-        os << " ";
-    }
-    return os;
-}
-#else
-#define trace_result 
-#define trace_result_for( cstr ) 
-#define trace_enter
-#define trace_leave
-#endif
 namespace xp
 {
     namespace parse
@@ -44,7 +25,6 @@ namespace xp
             const std::string & text
         )
         {
-            m_nesting = 0;
             m_text = text;
             m_text_pos = m_text . cbegin ( );
             return match_grammar ( );
@@ -59,7 +39,6 @@ namespace xp
         waxeye :: 
         match_grammar ( )
         {
-            trace_enter;
             bool result = false;
             if ( match_ws ( ) )
             {
@@ -81,8 +60,6 @@ namespace xp
                 // if is the empty string?
                 std::cerr << "expected ws at pos 0" << std::endl;
             }
-            trace_leave;
-            trace_result;
             return result;
         }
 
@@ -244,7 +221,6 @@ namespace xp
         waxeye ::
         match_eol_comment ( )
         {
-            trace_enter;
             bool result = false;
             if ( match_string ( "#" ) )
             {
@@ -257,15 +233,14 @@ namespace xp
                     // Continue    
                 }
                 // note how the expression value is un important here
-                // only the side effect of match_eol ( ) actuall matters
+                // only the side effect of match_eol ( ) (consuming it) 
+                // actuall matters
                 ( void ) ( match_eol ( ) || is_eof ( ) );
             }
             else
             {
                 result = false;
             }
-            trace_leave;
-            trace_result;
             return result;
         }
         
@@ -273,7 +248,6 @@ namespace xp
         bool waxeye ::
         match_mul_comment ( )
         {
-            trace_enter;
             bool result = false;
             const std::string::const_iterator pos_on_entry = m_text_pos;
             if ( match_string ( "/*" ) )
@@ -297,8 +271,6 @@ namespace xp
                     result = false;
                 }
             }
-            trace_leave;
-            trace_result;            
             return result;
         }
         
@@ -309,15 +281,12 @@ namespace xp
         waxeye ::
         match_eol ( )
         {
-            trace_enter;
             bool result =
             (
                 match_string ( "\r\n" ) ||
                 match_string ( "\n" ) ||
                 match_string ( "\r" )
             );
-            trace_leave;
-            trace_result;
             return result;
         }
 
@@ -326,7 +295,6 @@ namespace xp
         waxeye ::
         match_ws ( )
         {
-            trace_enter;
             // Always
             bool result = true;
             while 
@@ -339,8 +307,6 @@ namespace xp
             {
                 // contiue
             }
-            trace_leave;
-            trace_result;
             return result;
         }
 
@@ -369,7 +335,6 @@ namespace xp
                     }
                 }                
             }
-            trace_result;
             return result;
         }
 
@@ -385,11 +350,9 @@ namespace xp
             std::string::const_iterator pos = m_text_pos;
             for ( int i = 0; str [ i ] != '\0'; ++ i, ++ pos )
             {
-                if
-                ( 
+                if ( 
                     pos == m_text . cend ( ) ||
-                    * pos != str [ i ]
-                )
+                    * pos != str [ i ] )
                 {
                     result = false;
                     break;
@@ -399,7 +362,6 @@ namespace xp
             {
                 m_text_pos = pos;
             }
-            trace_result;
             return result;
         }
 
@@ -418,7 +380,6 @@ namespace xp
                 result = true;
                 ++ m_text_pos;
             }
-            trace_result;
         }
 
         // ! .
@@ -427,7 +388,6 @@ namespace xp
         not_any_char ( )
         {
             bool result = m_text_pos == m_text . cend ( );
-            trace_result;
             return result;
         }
 
@@ -437,7 +397,6 @@ namespace xp
         is_eof ( )
         {
             bool result = m_text_pos == m_text . cend ( );
-            trace_result;
             return result;
         }
 
@@ -462,7 +421,6 @@ namespace xp
                     break;
                 }
             }
-            trace_result;
             return result;
         }
 
@@ -479,7 +437,6 @@ namespace xp
                 not_string ( "\n"   ) &&
                 not_string ( "\r"   )
             );
-            trace_result;
             return result;
         }
     }
