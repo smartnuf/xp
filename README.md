@@ -14,4 +14,4 @@ eXperimental Parser -- I'll hand code a backtracking recursive descent parser to
   * Can we determine when the order of alternative choices alters the grammar for a given rule?
   * Can we generate test vectors to excersise the parser with good test coverage, and to give examples of the Language defined?
  
-* A recursive decent backtracking parser I've built here (really only a recogniser at this point, as it emits no syntax tree, f.e.) for an extended PEG like grammar (for Waxeye) has a 2,500 byte footprint. Which is quite respectable.
+* A recursive decent backtracking parser I've built [here](blob/master/src/parse/waxeye.cc) (really only a recogniser at this point, as it emits no syntax tree, f.e.) for an extended PEG like grammar (for Waxeye) has a 2,500 byte footprint. Which is quite respectable.
